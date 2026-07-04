@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
+        viewport meta tag — critical for mobile.
+        Without it, mobile browsers render the page at desktop
+        width (980px) then scale it down — text becomes tiny.
+        width=device-width tells the browser to use the actual
+        screen width. initial-scale=1.0 prevents zoom on load.
+        This is the single most important line for mobile support.
+    -->
+
+    <title>DSA Problem Search Engine</title>
+
+    <!--
+        Why no external CSS framework like Bootstrap?
+        Bootstrap adds ~150KB of CSS for features we don't use.
+        Our entire custom CSS will be ~100 lines.
+        Fewer dependencies = faster load = better for Railway's
+        free tier where cold starts already add latency.
+        Also — writing CSS yourself means you can explain
+        every single style decision in an interview.
+        "I used Bootstrap" is a much weaker answer than
+        "I wrote custom CSS using flexbox for layout because..."
+    -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!--
+        url_for('static', filename='style.css') — Flask's way
+        of generating the correct URL for static files.
+        Why not just write href="/static/style.css"?
+        If you ever deploy Flask under a subdirectory like
+        /app/style.css instead of /style.css, hardcoded paths
+        break. url_for always generates the correct path
+        regardless of where Flask is mounted.
+        This is called "URL building" — a Flask best practice.
+    -->
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">
+                🔍 DSA Search
+            </h1>
+            <p class="tagline">
+                Search 2000+ LeetCode problems by concept, not just title
+            </p>
+        </div>
+    </header>
+
+    <!-- =====================================================
+         SEARCH SECTION
+    ====================================================== -->
+    <main class="main-content">
+
+        <div class="search-container">
+            <div class="search-box">
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="search-input"
+                    placeholder="e.g. dynamic programming, binary search tree, graph BFS..."
+                    autocomplete="off"
+                    spellcheck="false"
+                />
+                <!--
+                    autocomplete="off" — prevents browser from
+                    showing dropdown of previous searches which
+                    would overlap our custom results UI.
+
+                    spellcheck="false" — technical queries like
+                    "trie", "dijkstra", "memoization" would get
+                    flagged as spelling errors by the browser.
+                    Distracting red underlines on valid CS terms.
+                -->
+                <button
+                    id="searchBtn"
+                    class="search-btn"
+                    onclick="handleSearch()"
+                >
+                    Search
+                </button>
+            </div>
+
+            <!--
+                Example query chips — helps users understand
+                what kind of queries work well.
+                Clicking a chip fills the search box and
+                immediately searches. This is called
+                "query suggestion" UX pattern.
+            -->
+            <div class="example-queries">
+                <span class="example-label">Try:</span>
+                <button class="chip" onclick="quickSearch('dynamic programming')">
+                    dynamic programming
+                </button>
+                <button class="chip" onclick="quickSearch('binary search')">
+                    binary search
+                </button>
+                <button class="chip" onclick="quickSearch('graph traversal')">
+                    graph traversal
+                </button>
+                <button class="chip" onclick="quickSearch('sliding window')">
+                    sliding window
+                </button>
+                <button class="chip" onclick="quickSearch('linked list cycle')">
+                    linked list cycle
+                </button>
+            </div>
+        </div>
+
+        <!-- =====================================================
+             RESULTS SECTION
+        ====================================================== -->
+        <div class="results-section">
+
+            <!--
+                Three states the results area can be in:
+                1. #statusMessage — shows loading / error / empty
+                2. #resultsInfo   — shows "X results for query"
+                3. #resultsList   — shows the actual cards
+
+                Why separate elements instead of one div?
+                Each has different styling and appears/disappears
+                independently. Mixing them into one div means
+                complex conditional rendering logic in JS.
+                Keeping them separate makes the JS cleaner —
+                each function just toggles visibility of the
+                right element.
+            -->
+
+            <div id="statusMessage" class="status-message"></div>
+
+            <div id="resultsInfo" class="results-info" style="display:none">
+                <span id="resultsCount"></span>
+                <span id="resultsQuery"></span>
+                <span id="responseTime"></span>
+            </div>
+
+            <div id="resultsList" class="results-list"></div>
+
+        </div>
+
+    </main>
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+    <footer class="footer">
+        <p>
+            Built with Python · Flask · TF-IDF · Cosine Similarity
+        </p>
+    </footer>
+
+    <!--
+        Script tag at the BOTTOM of body — not in <head>.
+        Why? The browser parses HTML top to bottom.
+        If script is in <head>, the browser downloads and
+        executes JS before rendering the page body —
+        the user sees a blank page while JS loads.
+        Putting script at the bottom means the page renders
+        first, then JS loads — perceived performance is better.
+        This is called "render-blocking" — a classic
+        web performance concept.
+    -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

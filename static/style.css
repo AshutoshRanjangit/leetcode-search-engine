@@ -1,0 +1,484 @@
+/* static/style.css */
+
+/* ============================================================
+   CSS VARIABLES — Design tokens
+   Why: Change one value here, updates everywhere.
+   If you want to switch from blue to green theme,
+   change --accent-color in one place instead of
+   hunting through 200 lines of CSS.
+   This is the CSS equivalent of constants in programming.
+============================================================ */
+:root {
+    --bg-primary: #0f1117;
+    --bg-secondary: #1a1d27;
+    --bg-card: #1e2130;
+    --accent-color: #f89f1b;      /* LeetCode's orange — intentional */
+    --accent-hover: #e8890a;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-color: #2d3748;
+    --success-color: #48bb78;
+    --border-radius: 8px;
+    --transition: 0.2s ease;
+
+    /* Why LeetCode orange as accent?
+       This is a LeetCode search tool — using their brand color
+       creates immediate visual association. Users instantly
+       understand what the tool is for. This is called
+       "borrowed brand equity" in design. */
+}
+
+/* ============================================================
+   RESET & BASE
+   Why reset? Browsers have different default styles —
+   Chrome, Firefox, Safari all render margins, padding,
+   font sizes differently. Reset gives us a clean baseline
+   so the app looks identical across browsers.
+============================================================ */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* box-sizing: border-box means padding and border are
+       included in an element's total width/height.
+       Without it, a div with width:200px and padding:10px
+       would actually be 220px wide — confusing and hard to
+       lay out. border-box is what every developer expects. */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont,
+                 'Segoe UI', Roboto, sans-serif;
+    /*
+        Why system fonts?
+        -apple-system = San Francisco on Mac/iOS
+        BlinkMacSystemFont = Chrome on Mac
+        Segoe UI = Windows
+        Roboto = Android/Chrome
+        Falls back down the list if earlier ones unavailable.
+        System fonts load instantly (already on device),
+        look native to the OS, and are optimized for
+        that screen's pixel density.
+        Custom fonts (Google Fonts) add 100-300ms load time
+        and can cause "flash of unstyled text" (FOUT).
+        For a developer tool, native system fonts are ideal.
+    */
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ============================================================
+   HEADER
+============================================================ */
+.header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 24px 0;
+    /* Sticky header so logo is always visible while scrolling */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    /* z-index: 100 ensures header stays above result cards
+       when user scrolls. Without this, cards would render
+       on top of the header — common z-index bug. */
+}
+
+.header-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px;
+    text-align: center;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-color);
+    letter-spacing: -0.5px;
+}
+
+.logo-link {
+    text-decoration: none;
+}
+
+.tagline {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* ============================================================
+   MAIN CONTENT
+============================================================ */
+.main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    /* max-width: 800px — why not full width?
+       Reading lines that are too long (>80 chars) cause
+       eye fatigue — the reader loses their place returning
+       to the next line. 800px is the sweet spot for readability.
+       This is called "measure" in typography. */
+}
+
+/* ============================================================
+   SEARCH BOX
+============================================================ */
+.search-container {
+    margin-bottom: 40px;
+}
+
+.search-box {
+    display: flex;
+    gap: 12px;
+    /* Flexbox for the input + button row.
+       Why flexbox over float or inline-block?
+       Float requires clearfix hacks and is fragile.
+       Inline-block creates whitespace between elements
+       that's hard to control. Flexbox is the modern,
+       clean, intentional approach for 1D layouts.
+       For 2D (rows AND columns), CSS Grid is better. */
+}
+
+.search-input {
+    flex: 1;
+    /* flex: 1 means "take up all remaining space".
+       The button has a fixed width, the input fills
+       everything else. This is the correct flex pattern
+       for a search bar — input stretches, button doesn't. */
+    padding: 14px 18px;
+    font-size: 16px;
+    background-color: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.search-input:focus {
+    border-color: var(--accent-color);
+    /* Visual feedback on focus — critical for accessibility.
+       Without a visible focus indicator, keyboard-only users
+       (and screen readers) can't tell which element is active.
+       This is a WCAG accessibility requirement. */
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-btn {
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: var(--accent-color);
+    color: #000;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition),
+                transform var(--transition);
+    white-space: nowrap;
+    /* white-space: nowrap prevents "Search" from
+       wrapping to two lines on small screens */
+}
+
+.search-btn:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+    /* Subtle lift on hover — gives tactile feedback
+       that the button is clickable. 1px is enough to
+       feel responsive without looking overdone. */
+}
+
+.search-btn:active {
+    transform: translateY(0);
+    /* Returns to original position on click —
+       simulates physical button press */
+}
+
+/* ============================================================
+   EXAMPLE QUERY CHIPS
+============================================================ */
+.example-queries {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+    align-items: center;
+}
+
+.example-label {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.chip {
+    padding: 6px 14px;
+    font-size: 13px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.chip:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+/* ============================================================
+   RESULTS
+============================================================ */
+.results-info {
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ============================================================
+   RESULT CARD
+============================================================ */
+.result-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 20px 24px;
+    transition: border-color var(--transition),
+                transform var(--transition);
+    cursor: pointer;
+}
+
+.result-card:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+    /* Cards lift on hover — clear visual affordance
+       that they're clickable. Combined with cursor:pointer
+       this removes any ambiguity about interactivity. */
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    gap: 12px;
+}
+
+.card-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-title:hover {
+    color: var(--accent-color);
+}
+
+.score-badge {
+    background-color: var(--accent-color);
+    color: #000;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+    /* flex-shrink: 0 prevents the badge from
+       squishing when the title is long */
+}
+
+.card-snippet {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+
+.card-footer {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.card-link {
+    font-size: 13px;
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.card-link:hover {
+    text-decoration: underline;
+}
+
+.card-id {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ============================================================
+   STATUS MESSAGES
+============================================================ */
+.status-message {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 15px;
+}
+
+/* ============================================================
+   PROBLEM PAGE
+============================================================ */
+.problem-page {
+    max-width: 860px;
+}
+
+.problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.problem-meta {
+    flex: 1;
+}
+
+.problem-id {
+    color: var(--text-muted);
+    font-size: 14px;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.problem-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.leetcode-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--accent-color);
+    color: #000;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: background-color var(--transition);
+}
+
+.leetcode-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+.problem-content {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 28px;
+    margin-bottom: 24px;
+}
+
+.problem-text {
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    /* pre-wrap preserves whitespace AND wraps long lines.
+       'pre' preserves but doesn't wrap (horizontal scroll).
+       'normal' wraps but collapses whitespace (loses formatting).
+       pre-wrap is the right choice for code-adjacent content. */
+}
+
+.problem-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.back-btn, .nav-btn {
+    padding: 10px 18px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all var(--transition);
+}
+
+.back-btn:hover, .nav-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.prev-next {
+    display: flex;
+    gap: 8px;
+}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.footer {
+    text-align: center;
+    padding: 32px 24px;
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 60px;
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE
+   Why media query at 600px?
+   600px is roughly the boundary between phones and tablets.
+   Below this, the search box row needs to stack vertically
+   because the button becomes too cramped next to the input.
+============================================================ */
+@media (max-width: 600px) {
+    .search-box {
+        flex-direction: column;
+        /* Stack input and button vertically on mobile */
+    }
+
+    .search-btn {
+        width: 100%;
+    }
+
+    .card-header {
+        flex-direction: column;
+    }
+
+    .problem-header {
+        flex-direction: column;
+    }
+
+    .leetcode-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

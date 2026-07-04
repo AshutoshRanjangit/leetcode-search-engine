@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} — DSA Search</title>
+    <!--
+        {{ title }} is Jinja2 templating syntax.
+        Flask uses Jinja2 as its template engine.
+        When render_template("problem.html", title=title)
+        is called in app.py, Jinja2 replaces {{ title }}
+        with the actual problem title.
+        This means each problem page has a unique browser
+        tab title — better UX and better SEO.
+    -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <!--
+                Clicking the logo goes back to home.
+                Simple navigation without a full router —
+                appropriate for a two-page app.
+            -->
+            <a href="/" class="logo-link">
+                <h1 class="logo">🔍 DSA Search</h1>
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content problem-page">
+
+        <!-- Problem Header -->
+        <div class="problem-header">
+            <div class="problem-meta">
+                <span class="problem-id">#{{ problem_id }}</span>
+                <h2 class="problem-title">{{ title }}</h2>
+            </div>
+
+            <!--
+                Opens LeetCode in new tab — why target="_blank"?
+                User came from search results to preview the problem.
+                If they click LeetCode, they want to go solve it
+                but might want to return to results too.
+                New tab preserves their search session.
+                rel="noopener noreferrer" is a security attribute —
+                without it, the opened tab can access and manipulate
+                the opener tab via window.opener. This is a known
+                XSS vector. Always add this with target="_blank".
+            -->
+            
+                href="{{ url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="leetcode-btn"
+            >
+                Solve on LeetCode →
+            </a>
+        </div>
+
+        <!-- Problem Content -->
+        <div class="problem-content">
+            <div class="problem-text">
+                <!--
+                    {{ full_text }} would render as one long string.
+                    We use the |replace filter to convert newlines
+                    to <br> tags so line breaks display correctly.
+
+                    Why not use |safe filter?
+                    |safe tells Jinja2 to render HTML tags in the string.
+                    Our problem text comes from LeetCode — if it
+                    contained any <script> tags (unlikely but possible),
+                    |safe would execute them — XSS vulnerability.
+                    |replace is safe because it only converts \n to <br>,
+                    it doesn't trust arbitrary HTML in the content.
+                    Security by default — never use |safe on
+                    user-supplied or scraped content.
+                -->
+                {{ full_text | replace('\n', '<br>') | safe }}
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="problem-navigation">
+            <a href="/" class="back-btn">← Back to Search</a>
+
+            <!--
+                Previous / Next problem navigation.
+                Simple but useful — user can browse adjacent problems.
+                Only show Previous if not on problem 1.
+                Only show Next if not on last problem.
+                Jinja2 conditionals handle this cleanly.
+            -->
+            <div class="prev-next">
+                {% if problem_id > 1 %}
+                <a href="/problem/{{ problem_id - 1 }}" class="nav-btn">
+                    ← Previous
+                </a>
+                {% endif %}
+
+                {% if problem_id < 2107 %}
+                <a href="/problem/{{ problem_id + 1 }}" class="nav-btn">
+                    Next →
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>Built with Python · Flask · TF-IDF · Cosine Similarity</p>
+    </footer>
+
+</body>
+</html>
