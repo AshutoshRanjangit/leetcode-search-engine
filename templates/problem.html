@@ -52,13 +52,12 @@
                 XSS vector. Always add this with target="_blank".
             -->
             
-                href="{{ url }}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="leetcode-btn"
-            >
-                Solve on LeetCode →
-            </a>
+           <a href="{{ url | e }}" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="leetcode-btn">
+                 Solve on LeetCode →
+           </a>
         </div>
 
         <!-- Problem Content -->
