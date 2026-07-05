@@ -76,14 +76,11 @@ body {
 .header {
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
-    padding: 24px 0;
-    /* Sticky header so logo is always visible while scrolling */
+    padding: 32px 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    /* z-index: 100 ensures header stays above result cards
-       when user scrolls. Without this, cards would render
-       on top of the header — common z-index bug. */
+    text-align: center;
 }
 
 .header-content {
